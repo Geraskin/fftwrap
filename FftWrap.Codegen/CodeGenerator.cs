@@ -17,6 +17,8 @@ namespace FftWrap.Codegen
             var cu = SyntaxFactory.CompilationUnit()
                 .AddUsings("System".ToUsingDirective())
                 .AddUsings("System.Generic".ToUsingDirective())
+                .AddUsings("System.Security".ToUsingDirective())
+                .AddUsings("System.Runtime.InteropServices".ToUsingDirective())
                 .AddMembers("FftWrap".ToNamespaceDeclaration()
                     .AddMembers(CreateClass("UnsafeNativeMethods")))
                 .NormalizeWhitespace();
@@ -91,7 +93,7 @@ namespace FftWrap.Codegen
         {
             return
                 CreateAttribute(
-                    @"[SuppressUnmanagedCodeSecurityAttribute()]");
+                    @"[SuppressUnmanagedCodeSecurity]");
         }
 
 
