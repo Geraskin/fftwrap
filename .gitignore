@@ -1,0 +1,5 @@
+﻿# what to ignore
+bin/
+obj/
+*.obj
+*.suo
