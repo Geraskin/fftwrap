@@ -13,8 +13,24 @@ namespace FftWrap.Examples
     {
         private static void Main(string[] args)
         {
-             
-            CodeGenerator.GenerateCSharpCodeWithRoslyn(@"UnsafeNativeMethods.cs");
+            var methods = FftwHeaderParser.ParseMethods(@"..\..\..\FftWrap.Codegen\Headers\fftw3.h");
+
+            foreach (var method in methods)
+            {
+                var name = Utils.ConvertMethodNames(method);
+                var type = Utils.ConvertTypeNames(method);
+
+                Console.WriteLine("\n{0} {1}", type, name);
+
+                foreach (var parameter in method.Parameters)
+                {
+                    var ptype = Utils.ConvertTypeNames(parameter);
+                    Console.WriteLine("\t{0} {1}", ptype, parameter.Name);
+                }
+
+            }
+
+            Console.WriteLine("Total {0} methods", methods.Count);
         }
     }
 }
