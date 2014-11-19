@@ -84,12 +84,13 @@
   <ItemGroup>
     <Compile Include="FftwHeaderParser.cs" />
     <Compile Include="Method.cs" />
-    <Compile Include="Modifiers.cs" />
-    <Compile Include="AccessModifiers.cs" />
+    <Compile Include="Roslyn\Modifiers.cs" />
+    <Compile Include="Roslyn\AccessModifiers.cs" />
     <Compile Include="CodeGenerator.cs" />
     <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RoslynHelper.cs" />
+    <Compile Include="Roslyn\RoslynHelper.cs" />
+    <Compile Include="Roslyn\Types.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>

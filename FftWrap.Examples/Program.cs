@@ -15,19 +15,25 @@ namespace FftWrap.Examples
         {
             var methods = FftwHeaderParser.ParseMethods(@"..\..\..\FftWrap.Codegen\Headers\fftw3.h");
 
+            CodeGenerator.GenerateCSharpCodeWithRoslyn(@"..\..\..\FftWrap\UnsafeNativeMethods.cs", methods);
+
+            //PrintMethods(methods);
+        }
+
+        private static void PrintMethods(IReadOnlyCollection<Method> methods)
+        {
             foreach (var method in methods)
             {
-                var name = Utils.ConvertMethodNames(method);
-                var type = Utils.ConvertTypeNames(method);
+                var name = method.NameToCSharp();
+                var type = method.TypeNameToCSharp();
 
                 Console.WriteLine("\n{0} {1}", type, name);
 
                 foreach (var parameter in method.Parameters)
                 {
-                    var ptype = Utils.ConvertTypeNames(parameter);
+                    var ptype = parameter.TypeNameToCSharp();
                     Console.WriteLine("\t{0} {1}", ptype, parameter.Name);
                 }
-
             }
 
             Console.WriteLine("Total {0} methods", methods.Count);
