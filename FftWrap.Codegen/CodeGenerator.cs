@@ -50,7 +50,7 @@ namespace FftWrap.Codegen
                 SyntaxFactory.FieldDeclaration(
                     SyntaxFactory.VariableDeclaration(
                         SyntaxFactory.PredefinedType(Types.String)))
-                    .AddVariable("NativeDllName", @"""libfftwf-3.3.dll""")
+                    .AddVariable("NativeDllName", @"""libfftw3f-3.dll""")
                     .AddModifiers(AccessModifiers.Private)
                     .AddModifiers(Modifiers.Const);
 
