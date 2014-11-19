@@ -13,11 +13,20 @@ namespace FftWrap.Examples
     {
         private static void Main(string[] args)
         {
+           
+
+            
+        }
+
+
+
+        private static void GenerateHeaderWraper()
+        {
             var methods = FftwHeaderParser.ParseMethods(@"..\..\..\FftWrap.Codegen\Headers\fftw3.h");
 
-            CodeGenerator.GenerateCSharpCodeWithRoslyn(@"..\..\..\FftWrap\UnsafeNativeMethods.cs", methods);
-
             //PrintMethods(methods);
+
+            CodeGenerator.GenerateCSharpCodeWithRoslyn(@"..\..\..\FftWrap\UnsafeNativeMethods.cs", methods);
         }
 
         private static void PrintMethods(IReadOnlyCollection<Method> methods)

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FftWrap", "FftWrap\FftWrap.csproj", "{5CB1047E-437F-4BF3-A2E3-5A43C9CBA91E}"
 EndProject
@@ -19,8 +19,8 @@ Global
 		{5CB1047E-437F-4BF3-A2E3-5A43C9CBA91E}.Debug|Any CPU.Build.0 = Debug|x64
 		{5CB1047E-437F-4BF3-A2E3-5A43C9CBA91E}.Release|Any CPU.ActiveCfg = Release|x64
 		{5CB1047E-437F-4BF3-A2E3-5A43C9CBA91E}.Release|Any CPU.Build.0 = Release|x64
-		{F9E710B6-CE0A-4C6D-AD53-9A1DF079E4D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F9E710B6-CE0A-4C6D-AD53-9A1DF079E4D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9E710B6-CE0A-4C6D-AD53-9A1DF079E4D8}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{F9E710B6-CE0A-4C6D-AD53-9A1DF079E4D8}.Debug|Any CPU.Build.0 = Debug|x64
 		{F9E710B6-CE0A-4C6D-AD53-9A1DF079E4D8}.Release|Any CPU.ActiveCfg = Release|x64
 		{F9E710B6-CE0A-4C6D-AD53-9A1DF079E4D8}.Release|Any CPU.Build.0 = Release|x64
 		{A61D92FE-42A4-47F4-B103-392F017C64D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
