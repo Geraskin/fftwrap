@@ -1,24 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace FftWrap
+namespace FftWrap.Numerics
 {
-    public class NativeArray1D<T> where T : struct
+    public class NativeArray<T> where T : struct
     {
-        static readonly int Size = Marshal.SizeOf(typeof(T));
-
         private readonly int _length;
         private readonly IntPtr _ptr;
 
-        public NativeArray1D(IntPtr ptr, int length)
+        public static readonly int ElementSize = Marshal.SizeOf(typeof(T));
+
+        public NativeArray(IntPtr ptr, int length)
         {
             _ptr = ptr;
             _length = length;
+        }
+
+        public IntPtr Ptr
+        {
+            get { return _ptr; }
         }
 
         public int Length
@@ -37,7 +37,7 @@ namespace FftWrap
             if (i < 0 || i >= _length)
                 throw new ArgumentOutOfRangeException();
 
-            int shift = i * Size;
+            int shift = i * ElementSize;
 
             Marshal.StructureToPtr(value, (IntPtr.Add(_ptr, shift)), false);
         }
@@ -47,8 +47,7 @@ namespace FftWrap
             if (i < 0 || i >= _length )
                 throw new ArgumentOutOfRangeException();
 
-            // in fortran 2-d indexing is reversed
-            int shift = i * Size;
+            int shift = i * ElementSize;
 
             return (T)Marshal.PtrToStructure(IntPtr.Add(_ptr, shift), typeof(T));
         }

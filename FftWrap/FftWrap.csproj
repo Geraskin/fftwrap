@@ -61,10 +61,14 @@
     <Compile Include="Direction.cs" />
     <Compile Include="Flags.cs" />
     <Compile Include="GuruFlags.cs" />
-    <Compile Include="ComplexArray1D.cs" />
-    <Compile Include="NativeArray1DHelper.cs" />
-    <Compile Include="NativeArray1D.cs" />
+    <Compile Include="Memory.cs" />
+    <Compile Include="Numerics\NativeArrayHelper.cs" />
+    <Compile Include="Numerics\NativeArray.cs" />
+    <Compile Include="Numerics\NativeMatrixHelper.cs" />
+    <Compile Include="Numerics\NativeMatrix.cs" />
+    <Compile Include="Plan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Numerics\SingleComplex.cs" />
     <Compile Include="UnsafeNativeMethods.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

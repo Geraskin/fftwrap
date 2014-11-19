@@ -1,65 +1,94 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
 using System.Numerics;
-using System.Runtime.InteropServices;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
 using FftWrap.Codegen;
+using FftWrap.Numerics;
 
 namespace FftWrap.Examples
 {
-    public class Program
+    public static class Program
     {
         private static void Main(string[] args)
         {
-            int length = 4;
+            //Perform1DTransformDirect();
+            Perform1DTransform();
 
-            var size = Marshal.SizeOf(typeof(Complex));
 
+        }
+
+
+        /// <summary>
+        /// Example using high-level wrapping
+        /// </summary>
+        public static void Perform1DTransform()
+        {
+            var arr1 = Memory.AllocateArray<SingleComplex>(4);
+            var arr2 = Memory.AllocateArray<Complex>(4);
+
+            try
+            {
+                arr1.SetEach(SingleComplex.Zero);
+                arr2.SetEach(Complex.Zero);
+
+                arr1[0] = SingleComplex.One;
+                arr2[0] = Complex.ImaginaryOne;
+
+                using (var plan1 = Plan.Create(arr1, Direction.Backward))
+                using (var plan2 = Plan.Create(arr1, Direction.Backward))
+                {
+                    plan1.Execute();
+                    plan2.Execute();
+
+                    plan1.Execute(arr2);
+                    plan2.Execute(arr2);
+                }
+
+                arr1.ForEach(c => Console.WriteLine(c));
+                Console.WriteLine();
+                arr2.ForEach(c => Console.WriteLine(c));
+            }
+            
+            finally
+            {
+                Memory.FreeAllPointers();
+            }
+        }
+
+        /// <summary>
+        /// Using fftw directly without high-level wrapper
+        /// </summary>
+        public static void Perform1DTransformDirect()
+        {
+            int length = 100;
+
+            var size = NativeArray<SingleComplex>.ElementSize;
 
             IntPtr srcPtr = Fftwf.Malloc((IntPtr)(length * size));
             IntPtr dstPtr = Fftwf.Malloc((IntPtr)(length * size));
 
-            var src = new ComplexArray1D(srcPtr, length);
-            var dst = new ComplexArray1D(dstPtr, length);
+            try
+            {
+                var src = new NativeArray<SingleComplex>(srcPtr, length);
+                var dst = new NativeArray<SingleComplex>(dstPtr, length);
 
-            src[0] = Complex.One;
-            src[1] = 0;
-            src[2] = 0;
-            src[3] = 0;
+                src.SetEach(SingleComplex.Zero);
+                src[0] = SingleComplex.One;
 
-            
-            Console.WriteLine("src");
-            src.ForEach(c => Console.WriteLine(c));
+                IntPtr plan1 = Fftwf.PlanDft1D(length, srcPtr, dstPtr, (int)Direction.Forward, (uint)Flags.Estimate);
+                IntPtr plan2 = Fftwf.PlanDft1D(length, dstPtr, srcPtr, (int)Direction.Backward, (uint)Flags.Estimate);
 
-            IntPtr plan1 = Fftwf.PlanDft1D(length, srcPtr, dstPtr, (int)Direction.Forward, (uint)Flags.Estimate);
-            IntPtr plan2 = Fftwf.PlanDft1D(length, dstPtr, srcPtr, (int)Direction.Backward, (uint)Flags.Estimate);
+                Fftwf.Execute(plan1);
+                Fftwf.Execute(plan2);
 
-            
-            
+                Fftwf.DestroyPlan(plan1);
+                Fftwf.DestroyPlan(plan2);
+            }
 
-            Fftwf.Execute(plan1);
-
-            Console.WriteLine("\ndst\n");
-            dst.ForEach(c => Console.WriteLine(c));
-            
-            
-            Fftwf.Execute(plan2);
-
-            Console.WriteLine("\nagain src\n");
-            src.ForEach(c => Console.WriteLine(c));
-            
-
-
-
-            Fftwf.DestroyPlan(plan1);
-            Fftwf.DestroyPlan(plan2);
-
-            Fftwf.Free(srcPtr);
-            Fftwf.Free(dstPtr);
+            finally
+            {
+                Fftwf.Free(srcPtr);
+                Fftwf.Free(dstPtr);
+            }
         }
 
 
