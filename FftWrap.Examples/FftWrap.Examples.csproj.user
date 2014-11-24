@@ -3,6 +3,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <StartAction>Program</StartAction>
     <StartProgram>C:\Program Files\Microsoft MPI\Bin\mpiexec.exe</StartProgram>
-    <StartArguments>-n 4  FftWrap.Examples.exe</StartArguments>
+    <StartArguments>-n 4 FftWrap.Examples.exe</StartArguments>
   </PropertyGroup>
 </Project>

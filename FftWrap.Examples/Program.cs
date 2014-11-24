@@ -24,9 +24,97 @@ namespace FftWrap.Examples
             {
                 Console.WriteLine("rank {0} of {1}", mpi.Rank, mpi.Size);
 
+                int size1 = 4;
+                int size2 = 3;
 
-                var size1 = (IntPtr)8;
-                var size2 = (IntPtr)3;
+                FftwfMpi.Init();
+
+                using (var plan = DistributedPlan.CreateNewPlan2D(mpi.IsMaster, Mpi.CommWorld, size1, size2, 3))
+                {
+                    plan.SetAllValuesTo(SingleComplex.Zero);
+                    //plan.SetAllValuesTo(1, 2 * SingleComplex.One);
+                    //plan.SetAllValuesTo(2, 3 * SingleComplex.One);
+                    plan.SetValue(0, 0, SingleComplex.One);
+                    plan.SetValue(0, 0, 1, SingleComplex.One);
+                    plan.SetValue(0, 0, 2, SingleComplex.One);
+
+
+                    Console.WriteLine("r:{0} {1} {2}", mpi.Rank, plan.LocalSize1Start, plan.LocalSize1);
+
+
+                    PrintAllValues(mpi, plan);
+
+                    plan.RunForward();
+
+                    Console.WriteLine();
+
+                    //plan.SetValue(2, 1, new SingleComplex(7,0));
+                    PrintAllValues(mpi, plan);
+
+
+                    //plan.RunBackward();
+
+                    //Console.WriteLine();
+                    //PrintAllValues(mpi, plan);
+
+                }
+
+                mpi.Barrier();
+
+                FftwfMpi.Cleanup();
+            }
+        }
+
+
+        private static void PrintAllValues(Mpi mpi, DistributedPlan plan)
+        {
+            if (plan.Interleaved == 1)
+                PrintAllValuesNotInterleaved(mpi, plan);
+            else
+                PrintAllValuesInterleaved(mpi, plan);
+        }
+
+        private static void PrintAllValuesInterleaved(Mpi mpi, DistributedPlan plan)
+        {
+            for (int k = 0; k < plan.Interleaved; k++)
+            {
+                for (int i = 0; i < plan.FullSize1; i++)
+                    for (int j = 0; j < plan.FullSize2; j++)
+                    {
+                        var value = plan.GetValue(i, j, k);
+
+                        if (value.HasValue)
+                            Console.WriteLine("r:{0}, k:{4} m[{1},{2}]={3}", mpi.Rank, i, j, value.Value, k);
+                    }
+
+                mpi.Barrier();
+
+                if (mpi.IsMaster)
+                    Console.WriteLine();
+            }
+        }
+
+        private static void PrintAllValuesNotInterleaved(Mpi mpi, DistributedPlan plan)
+        {
+            for (int i = 0; i < plan.FullSize1; i++)
+                for (int j = 0; j < plan.FullSize2; j++)
+                {
+                    var value = plan.GetValue(i, j);
+
+                    if (value.HasValue)
+                        Console.WriteLine("r:{0} m[{1},{2}]={3}", mpi.Rank, i, j, value.Value);
+                }
+        }
+
+        private static void Perform2DMpiDirect()
+        {
+            using (var mpi = new Mpi())
+            {
+                Console.WriteLine("rank {0} of {1}", mpi.Rank, mpi.Size);
+
+
+                var size1 = (IntPtr)4;
+                var size2 = (IntPtr)1;
 
                 IntPtr ptrLocalN0;
                 IntPtr ptrLocalN0Start;
@@ -34,7 +122,9 @@ namespace FftWrap.Examples
                 FftwfMpi.Init();
 
 
-                IntPtr localSize = FftwfMpi.LocalSize2D(size1, size2, Mpi.CommWorld, out ptrLocalN0, out ptrLocalN0Start);
+
+                IntPtr localSize = FftwfMpi.LocalSizeMany(2, new IntPtr[] { size1, size2 }, new IntPtr(1), new IntPtr(0), Mpi.CommWorld, out ptrLocalN0, out ptrLocalN0Start);
+                //IntPtr localSize = FftwfMpi.LocalSize2D(size1, size2, Mpi.CommWorld, out ptrLocalN0, out ptrLocalN0Start);
 
 
                 IntPtr srcPtr = Fftwf.AllocComplex(localSize);
@@ -52,7 +142,7 @@ namespace FftWrap.Examples
                 var plan1 = FftwfMpi.PlanDft2D(size1, size2, srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Forward, (uint)Flags.Estimate);
                 var plan2 = FftwfMpi.PlanDft2D(size1, size2, srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Backward, (uint)Flags.Estimate);
 
-                FftwfMpi.LocalSizeMany()
+
 
                 Fftwf.Execute(plan1);
                 Fftwf.Execute(plan2);
@@ -64,6 +154,8 @@ namespace FftWrap.Examples
 
                 Fftwf.DestroyPlan(plan1);
                 Fftwf.DestroyPlan(plan2);
+
+                Fftwf.Free(srcPtr);
 
 
                 FftwfMpi.Cleanup();
