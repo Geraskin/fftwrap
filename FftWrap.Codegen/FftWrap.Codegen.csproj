@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{A61D92FE-42A4-47F4-B103-392F017C64D4}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>FftWrap.Codegen</RootNamespace>
     <AssemblyName>FftWrap.Codegen</AssemblyName>
@@ -46,6 +46,9 @@
     <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis">
@@ -102,6 +105,7 @@
   <ItemGroup>
     <Compile Include="FftwHeaderParser.cs" />
     <Compile Include="Method.cs" />
+    <Compile Include="program.cs" />
     <Compile Include="Roslyn\Modifiers.cs" />
     <Compile Include="Roslyn\AccessModifiers.cs" />
     <Compile Include="CodeGenerator.cs" />
@@ -115,6 +119,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Headers\fftw3-mpi.h" />
     <Content Include="Headers\fftw3.h" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

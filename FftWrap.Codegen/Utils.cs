@@ -61,7 +61,7 @@ namespace FftWrap.Codegen
 
         private static string ExtractCoreName(string name)
         {
-            return Regex.Match(name, @"X[(](?<core>\w+)[)]").Groups["core"].ToString();
+            return Regex.Match(name, @"(X|XM)\((?<core>\w+)\)").Groups["core"].ToString();
         }
 
         public static string TypeNameToCSharp(this Method origin)
@@ -71,6 +71,9 @@ namespace FftWrap.Codegen
 
             if (origin.ReturnType == @"X(plan)")
                 return "IntPtr";
+
+            if (origin.ReturnType == @"ptrdiff_t")
+                return @"IntPtr";
 
             return origin.ReturnType;
         }
@@ -91,6 +94,14 @@ namespace FftWrap.Codegen
 
             if (origin.Type == @"size_t")
                 return @"IntPtr";
+
+            if (origin.Type == @"ptrdiff_t")
+                return @"IntPtr";
+
+            if (origin.Type == @"MPI_Comm")
+                return @"IntPtr";
+
+
 
             return origin.Type;
         }

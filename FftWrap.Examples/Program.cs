@@ -11,9 +11,7 @@ namespace FftWrap.Examples
         private static void Main(string[] args)
         {
             //Perform1DTransformDirect();
-            Perform1DTransform();
-
-
+            //Perform1DTransform();
         }
 
 
@@ -91,16 +89,6 @@ namespace FftWrap.Examples
             }
         }
 
-
-
-        private static void GenerateHeaderWraper()
-        {
-            var methods = FftwHeaderParser.ParseMethods(@"..\..\..\FftWrap.Codegen\Headers\fftw3.h");
-
-            //PrintMethods(methods);
-
-            CodeGenerator.GenerateCSharpCodeWithRoslyn(@"..\..\..\FftWrap\UnsafeNativeMethods.cs", methods);
-        }
 
         private static void PrintMethods(IReadOnlyCollection<Method> methods)
         {

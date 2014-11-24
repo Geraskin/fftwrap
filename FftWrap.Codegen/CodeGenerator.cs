@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,21 +18,21 @@ namespace FftWrap.Codegen
       otherwise all result could be lost
   */";
 
-        public static void GenerateCSharpCodeWithRoslyn(string path, IReadOnlyCollection<Method> methods)
+        public static void GenerateCSharpCodeWithRoslyn(string path, string className,  string dllName, IReadOnlyCollection<Method> methods)
         {
             var cu = SyntaxFactory.CompilationUnit()
                 .AddUsings("System".ToUsingDirective())
                 .AddUsings("System.Security".ToUsingDirective())
                 .AddUsings("System.Runtime.InteropServices".ToUsingDirective())
                 .AddMembers("FftWrap".ToNamespaceDeclaration()
-                    .AddMembers(CreateClass("Fftwf", methods)))
+                    .AddMembers(CreateClass(className, dllName, methods)))
                 .NormalizeWhitespace();
 
             using (var sw = new StreamWriter(path))
                 cu.WriteTo(sw);
         }
 
-        private static ClassDeclarationSyntax CreateClass(string name, IReadOnlyCollection<Method> methods)
+        private static ClassDeclarationSyntax CreateClass(string name, string dllName, IReadOnlyCollection<Method> methods)
         {
             var attr = CreateAttributeSuppress();
 
@@ -40,17 +41,17 @@ namespace FftWrap.Codegen
                 .AddModifiers(AccessModifiers.Public)
                 .AddModifiers(Modifiers.Static)
                 .AddModifiers(Modifiers.Partial)
-                .AddMembers(CreateField())
+                .AddMembers(CreateField(dllName))
                 .AddMembers(CreateMethods(methods));
         }
 
-        private static MemberDeclarationSyntax CreateField()
+        private static MemberDeclarationSyntax CreateField(string dllName)
         {
             var field =
                 SyntaxFactory.FieldDeclaration(
                     SyntaxFactory.VariableDeclaration(
                         SyntaxFactory.PredefinedType(Types.String)))
-                    .AddVariable("NativeDllName", @"""libfftw3f-3.dll""")
+                    .AddVariable("NativeDllName", dllName)
                     .AddModifiers(AccessModifiers.Private)
                     .AddModifiers(Modifiers.Const);
 
