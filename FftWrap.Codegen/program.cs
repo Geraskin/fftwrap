@@ -9,7 +9,7 @@ namespace FftWrap.Examples
         private static void Main(string[] args)
         {
             GenerateMpiHeaderWraper();
-            //GenerateHeaderWraper();
+            GenerateHeaderWraper();
         }
 
 

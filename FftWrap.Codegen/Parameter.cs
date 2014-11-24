@@ -5,11 +5,14 @@
         private readonly string _type;
         private readonly string _name;
         private readonly bool _isPointer;
-        public Parameter(string type, string name, bool isPointer)
+        private readonly bool _isConst;
+        
+        public Parameter(string type, string name, bool isPointer, bool isConst)
         {
             _type = type;
             _name = name;
             _isPointer = isPointer;
+            _isConst = isConst;
         }
 
         public string Type
@@ -25,6 +28,11 @@
         public bool IsPointer
         {
             get { return _isPointer; }
+        }
+
+        public bool IsConst
+        {
+            get { return _isConst; }
         }
     }
 }

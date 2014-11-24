@@ -91,6 +91,9 @@ namespace FftWrap.Codegen
         {
             if (origin.IsPointer)
             {
+                if (origin.IsConst)
+                    return @"[In] IntPtr[]";
+
                 if (origin.Type == @"ptrdiff_t")
                     return @"out IntPtr";
 

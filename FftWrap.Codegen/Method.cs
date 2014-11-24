@@ -7,16 +7,18 @@ namespace FftWrap.Codegen
         private readonly string _returnType;
         private readonly string _name;
         private readonly bool _returnTypeIsPointer;
+        private readonly bool _returnTypeIsConst;
         private readonly IReadOnlyCollection<Parameter> _parameters;
 
-        public Method(string returnType, string name, bool returnTypeIsPointer, IReadOnlyCollection<Parameter> parameters)
+        public Method(string returnType, string name, bool returnTypeIsPointer, bool returnTypeIsConst, IReadOnlyCollection<Parameter> parameters)
         {
             _returnType = returnType;
             _name = name;
             _returnTypeIsPointer = returnTypeIsPointer;
+            _returnTypeIsConst = returnTypeIsConst;
             _parameters = parameters;
         }
-
+        
         public string ReturnType
         {
             get { return _returnType; }
@@ -35,6 +37,11 @@ namespace FftWrap.Codegen
         public IReadOnlyCollection<Parameter> Parameters
         {
             get { return _parameters; }
+        }
+
+        public bool ReturnTypeIsConst
+        {
+            get { return _returnTypeIsConst; }
         }
     }
 }

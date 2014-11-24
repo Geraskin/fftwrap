@@ -110,9 +110,6 @@ namespace FftWrap.Codegen
                 var type = SyntaxFactory.ParseTypeName(parameter.TypeNameToCSharp());
                 var identifier = SyntaxFactory.Identifier(parameter.NameToCSharp());
 
-
-                Console.WriteLine(type);
-
                 var p = SyntaxFactory.Parameter(
                     new SyntaxList<AttributeListSyntax>(),
                     new SyntaxTokenList(),

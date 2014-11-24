@@ -52,7 +52,7 @@ namespace FftWrap.Examples
                 var plan1 = FftwfMpi.PlanDft2D(size1, size2, srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Forward, (uint)Flags.Estimate);
                 var plan2 = FftwfMpi.PlanDft2D(size1, size2, srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Backward, (uint)Flags.Estimate);
 
-
+                FftwfMpi.LocalSizeMany()
 
                 Fftwf.Execute(plan1);
                 Fftwf.Execute(plan2);
