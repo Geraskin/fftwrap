@@ -25,14 +25,28 @@ namespace FftWrap.Codegen
                 .AddUsings("System.Security".ToUsingDirective())
                 .AddUsings("System.Runtime.InteropServices".ToUsingDirective())
                 .AddMembers("FftWrap".ToNamespaceDeclaration()
-                    .AddMembers(CreateClass(className, dllName, methods)))
+                    .AddMembers(CreateClass(className, dllName, false, methods)))
                 .NormalizeWhitespace();
 
             using (var sw = new StreamWriter(path))
                 cu.WriteTo(sw);
         }
 
-        private static ClassDeclarationSyntax CreateClass(string name, string dllName, IReadOnlyCollection<Method> methods)
+        public static void GenerateMpiCSharpCodeWithRoslyn(string path, string className, string dllName, IReadOnlyCollection<Method> methods)
+        {
+            var cu = SyntaxFactory.CompilationUnit()
+                .AddUsings("System".ToUsingDirective())
+                .AddUsings("System.Security".ToUsingDirective())
+                .AddUsings("System.Runtime.InteropServices".ToUsingDirective())
+                .AddMembers("FftWrap".ToNamespaceDeclaration()
+                    .AddMembers(CreateClass(className, dllName, true, methods)))
+                .NormalizeWhitespace();
+
+            using (var sw = new StreamWriter(path))
+                cu.WriteTo(sw);
+        }
+
+        private static ClassDeclarationSyntax CreateClass(string name, string dllName, bool mpi, IReadOnlyCollection<Method> methods)
         {
             var attr = CreateAttributeSuppress();
 
@@ -42,7 +56,7 @@ namespace FftWrap.Codegen
                 .AddModifiers(Modifiers.Static)
                 .AddModifiers(Modifiers.Partial)
                 .AddMembers(CreateField(dllName))
-                .AddMembers(CreateMethods(methods));
+                .AddMembers(CreateMethods(methods, mpi));
         }
 
         private static MemberDeclarationSyntax CreateField(string dllName)
@@ -58,18 +72,22 @@ namespace FftWrap.Codegen
             return field;
         }
 
-        private static MemberDeclarationSyntax[] CreateMethods(IReadOnlyCollection<Method> methods)
+        private static MemberDeclarationSyntax[] CreateMethods(IReadOnlyCollection<Method> methods, bool mpi)
         {
-            return methods.Select(CreateMethod)
+            return methods.Select(m=> CreateMethod (m, mpi))
                     .Cast<MemberDeclarationSyntax>()
                     .ToArray();
         }
 
-        private static MethodDeclarationSyntax CreateMethod(Method method)
+        private static MethodDeclarationSyntax CreateMethod(Method method, bool mpi)
         {
             var parameters = CreateParameters(method.Parameters);
 
-            var attr = CreateAttributeDllImport("NativeDllName", method.NameToNativeSinglePrecision());
+            var nativeMethodName = mpi ?
+                 method.NameToNativeSinglePrecisionWithMpi() :
+                 method.NameToNativeSinglePrecision();
+
+            var attr = CreateAttributeDllImport("NativeDllName", nativeMethodName);
 
             var returnType = method.TypeNameToCSharp();
             var name = method.NameToCSharp();

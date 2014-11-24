@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using FftWrap.Codegen;
 using FftWrap.Numerics;
+using Porvem.Parallel;
 
 namespace FftWrap.Examples
 {
@@ -10,8 +11,21 @@ namespace FftWrap.Examples
     {
         private static void Main(string[] args)
         {
-            //Perform1DTransformDirect();
-            //Perform1DTransform();
+            using (var mpi = new Mpi())
+            {
+                Console.WriteLine(mpi.IsMaster);
+                Console.WriteLine(mpi.IsParallel);
+                
+                
+                FftwfMpi.Init();
+
+
+
+                FftwfMpi.Cleanup();
+            }
+            
+            Perform1DTransformDirect();
+            Perform1DTransform();
         }
 
 
@@ -21,15 +35,15 @@ namespace FftWrap.Examples
         public static void Perform1DTransform()
         {
             var arr1 = Memory.AllocateArray<SingleComplex>(4);
-            var arr2 = Memory.AllocateArray<Complex>(4);
+            var arr2 = Memory.AllocateArray<SingleComplex>(4);
 
             try
             {
                 arr1.SetEach(SingleComplex.Zero);
-                arr2.SetEach(Complex.Zero);
+                arr2.SetEach(SingleComplex.Zero);
 
                 arr1[0] = SingleComplex.One;
-                arr2[0] = Complex.ImaginaryOne;
+                arr2[0] = SingleComplex.ImaginaryOne;
 
                 using (var plan1 = Plan.Create(arr1, Direction.Backward))
                 using (var plan2 = Plan.Create(arr1, Direction.Backward))

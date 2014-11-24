@@ -32,7 +32,7 @@ namespace FftWrap.Examples
 
             //PrintMethods(methods);
 
-            CodeGenerator.GenerateCSharpCodeWithRoslyn(
+            CodeGenerator.GenerateMpiCSharpCodeWithRoslyn(
                 path: @"..\..\..\FftWrap\FftwMpi.cs", 
                 className:@"FftwfMpi", 
                 dllName: @"""libfftw3f-3.dll""", 

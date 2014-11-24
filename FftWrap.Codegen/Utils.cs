@@ -9,6 +9,7 @@ namespace FftWrap.Codegen
     {
         public const string SinglePecisionPrefix = @"fftwf";
         public const string DoublePecisionPrefix = @"fftw";
+        public const string MpiPrefix = @"mpi";
         
         public static string NameToCSharp(this Method origin)
         {
@@ -50,6 +51,13 @@ namespace FftWrap.Codegen
             string coreName = ExtractCoreName(origin.Name);
 
             return SinglePecisionPrefix + "_" + coreName;
+        }
+
+        public static string NameToNativeSinglePrecisionWithMpi(this Method origin)
+        {
+            string coreName = ExtractCoreName(origin.Name);
+
+            return SinglePecisionPrefix + "_" + MpiPrefix + "_" + coreName;
         }
 
         public static string NameToNativeDoublePrecision(this Method origin)
