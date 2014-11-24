@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using FftWrap.Codegen;
 using FftWrap.Numerics;
 using Porvem.Parallel;
@@ -11,34 +12,78 @@ namespace FftWrap.Examples
     {
         private static void Main(string[] args)
         {
+            Perform2DMpi();
+
+            //Perform1DTransformDirect();
+            //Perform1DTransform();
+        }
+
+        private static void Perform2DMpi()
+        {
             using (var mpi = new Mpi())
             {
-                Console.WriteLine(mpi.IsMaster);
-                Console.WriteLine(mpi.IsParallel);
+                Console.WriteLine("rank {0} of {1}", mpi.Rank, mpi.Size);
 
 
-                var size1 = (IntPtr) 4;
-                var size2 = (IntPtr) 6;
+                var size1 = (IntPtr)8;
+                var size2 = (IntPtr)3;
 
-                IntPtr ptrLocalN0; 
+                IntPtr ptrLocalN0;
                 IntPtr ptrLocalN0Start;
 
-                
                 FftwfMpi.Init();
 
 
-               IntPtr localSize =  FftwfMpi.LocalSize2D(size1, size2, Mpi.CommWorld, out ptrLocalN0, out ptrLocalN0Start);
+                IntPtr localSize = FftwfMpi.LocalSize2D(size1, size2, Mpi.CommWorld, out ptrLocalN0, out ptrLocalN0Start);
+
+
+                IntPtr srcPtr = Fftwf.AllocComplex(localSize);
+
+                var matrix = new NativeMatrix<SingleComplex>(srcPtr, (int)ptrLocalN0, (int)size2);
+
+                ClearArray(mpi, (int)ptrLocalN0Start, (int)ptrLocalN0, (int)size2, matrix);
+
+                if (mpi.Rank == 0)
+                    matrix[0, 0] = SingleComplex.One;
+
+                PrintArray(mpi, (int)ptrLocalN0Start, (int)ptrLocalN0, (int)size2, matrix);
+
+
+                var plan1 = FftwfMpi.PlanDft2D(size1, size2, srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Forward, (uint)Flags.Estimate);
+                var plan2 = FftwfMpi.PlanDft2D(size1, size2, srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Backward, (uint)Flags.Estimate);
 
 
 
-                Console.WriteLine("{0} {1} {2}", localSize, ptrLocalN0, ptrLocalN0Start);
+                Fftwf.Execute(plan1);
+                Fftwf.Execute(plan2);
+
+
+                Console.WriteLine();
+
+                PrintArray(mpi, (int)ptrLocalN0Start, (int)ptrLocalN0, (int)size2, matrix);
+
+                Fftwf.DestroyPlan(plan1);
+                Fftwf.DestroyPlan(plan2);
 
 
                 FftwfMpi.Cleanup();
             }
-            
-            //Perform1DTransformDirect();
-            //Perform1DTransform();
+        }
+
+
+        private static void PrintArray(Mpi mpi, int n0Start, int n0Size, int size2, NativeMatrix<SingleComplex> matrix)
+        {
+            for (int i = 0; i < n0Size; i++)
+                for (int j = 0; j < size2; j++)
+                    Console.WriteLine("r:{0} m[{1},{2}]={3}", mpi.Rank, i + n0Start, j, matrix[i, j]);
+        }
+
+
+        private static void ClearArray(Mpi mpi, int n0Start, int n0Size, int size2, NativeMatrix<SingleComplex> matrix)
+        {
+            for (int i = 0; i < n0Size; i++)
+                for (int j = 0; j < size2; j++)
+                    matrix[i, j] = SingleComplex.Zero;
         }
 
 
@@ -72,7 +117,7 @@ namespace FftWrap.Examples
                 Console.WriteLine();
                 arr2.ForEach(c => Console.WriteLine(c));
             }
-            
+
             finally
             {
                 Memory.FreeAllPointers();
@@ -86,10 +131,9 @@ namespace FftWrap.Examples
         {
             int length = 100;
 
-            var size = NativeArray<SingleComplex>.ElementSize;
 
-            IntPtr srcPtr = Fftwf.Malloc((IntPtr)(length * size));
-            IntPtr dstPtr = Fftwf.Malloc((IntPtr)(length * size));
+            IntPtr srcPtr = Fftwf.AllocComplex((IntPtr)length);
+            IntPtr dstPtr = Fftwf.AllocComplex((IntPtr)length);
 
             try
             {
