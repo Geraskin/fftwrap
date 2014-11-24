@@ -15,17 +15,30 @@ namespace FftWrap.Examples
             {
                 Console.WriteLine(mpi.IsMaster);
                 Console.WriteLine(mpi.IsParallel);
-                
+
+
+                var size1 = (IntPtr) 4;
+                var size2 = (IntPtr) 6;
+
+                IntPtr ptrLocalN0; 
+                IntPtr ptrLocalN0Start;
+
                 
                 FftwfMpi.Init();
 
+
+               IntPtr localSize =  FftwfMpi.LocalSize2D(size1, size2, Mpi.CommWorld, out ptrLocalN0, out ptrLocalN0Start);
+
+
+
+                Console.WriteLine("{0} {1} {2}", localSize, ptrLocalN0, ptrLocalN0Start);
 
 
                 FftwfMpi.Cleanup();
             }
             
-            Perform1DTransformDirect();
-            Perform1DTransform();
+            //Perform1DTransformDirect();
+            //Perform1DTransform();
         }
 
 

@@ -103,15 +103,16 @@ namespace FftWrap.Codegen
 
         private static ParameterListSyntax CreateParameters(IReadOnlyCollection<Parameter> parameters)
         {
-            var sb = new StringBuilder();
-
             var list = new List<ParameterSyntax>();
 
             foreach (var parameter in parameters.Take(parameters.Count))
             {
                 var type = SyntaxFactory.ParseTypeName(parameter.TypeNameToCSharp());
                 var identifier = SyntaxFactory.Identifier(parameter.NameToCSharp());
-                
+
+
+                Console.WriteLine(type);
+
                 var p = SyntaxFactory.Parameter(
                     new SyntaxList<AttributeListSyntax>(),
                     new SyntaxTokenList(),

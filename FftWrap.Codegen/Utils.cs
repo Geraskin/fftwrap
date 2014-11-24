@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Odbc;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -10,7 +11,7 @@ namespace FftWrap.Codegen
         public const string SinglePecisionPrefix = @"fftwf";
         public const string DoublePecisionPrefix = @"fftw";
         public const string MpiPrefix = @"mpi";
-        
+
         public static string NameToCSharp(this Method origin)
         {
             string coreName = ExtractCoreName(origin.Name);
@@ -34,7 +35,7 @@ namespace FftWrap.Codegen
                 return @"";
 
             var name = origin.Name;
-            
+
             name = name.Replace('_', ' ');
             name = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(name);
             name = name.Replace(" ", "");
@@ -89,7 +90,12 @@ namespace FftWrap.Codegen
         public static string TypeNameToCSharp(this Parameter origin)
         {
             if (origin.IsPointer)
+            {
+                if (origin.Type == @"ptrdiff_t")
+                    return @"out IntPtr";
+
                 return @"IntPtr";
+            }
 
             if (origin.Type.StartsWith(@"X("))
                 return @"IntPtr";
@@ -108,7 +114,6 @@ namespace FftWrap.Codegen
 
             if (origin.Type == @"MPI_Comm")
                 return @"IntPtr";
-
 
 
             return origin.Type;
