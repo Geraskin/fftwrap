@@ -53,9 +53,10 @@ namespace FftWrap.Numerics
             if (i < 0 || i >= Nx || j < 0 || j >= Ny)
                 throw new ArgumentOutOfRangeException();
 
-            int shift = CalculateShift(i, j);
+            long shift = CalculateShift(i, j);
+            var shifted = new IntPtr(_ptr.ToInt64() + shift);
 
-            Marshal.StructureToPtr(value, (IntPtr.Add(_ptr, shift)), false);
+            Marshal.StructureToPtr(value, shifted, false);
         }
 
         private T GetValue(int i, int j)
@@ -63,9 +64,10 @@ namespace FftWrap.Numerics
             if (i < 0 || i >= Nx || j < 0 || j >= Ny)
                 throw new ArgumentOutOfRangeException();
 
-            int shift = CalculateShift(i, j);
+            long shift = CalculateShift(i, j);
+            var shifted = new IntPtr(_ptr.ToInt64() + shift);
 
-            return (T)Marshal.PtrToStructure(IntPtr.Add(_ptr, shift), typeof(SingleComplex));
+            return (T)Marshal.PtrToStructure(shifted, typeof(SingleComplex));
         }
 
         private void SetValue(int i, int j, int k, T value)
@@ -75,9 +77,10 @@ namespace FftWrap.Numerics
                 k < 0 || k >= _interleaved)
                 throw new ArgumentOutOfRangeException();
 
-            int shift = CalculateShift(i, j, k);
+            long shift = CalculateShift(i, j, k);
+            var shifted = new IntPtr(_ptr.ToInt64() + shift);
 
-            Marshal.StructureToPtr(value, (IntPtr.Add(_ptr, shift)), false);
+            Marshal.StructureToPtr(value, shifted, false);
         }
 
         private T GetValue(int i, int j, int k)
@@ -87,20 +90,21 @@ namespace FftWrap.Numerics
                 k < 0 || k >= _interleaved)
                 throw new ArgumentOutOfRangeException();
 
-            int shift = CalculateShift(i, j, k);
+            long shift = CalculateShift(i, j, k);
+            var shifted = new IntPtr(_ptr.ToInt64() + shift);
 
-            return (T)Marshal.PtrToStructure(IntPtr.Add(_ptr, shift), typeof(SingleComplex));
+            return (T)Marshal.PtrToStructure(shifted, typeof(SingleComplex));
         }
 
 
-        private int CalculateShift(int i, int j)
+        private long CalculateShift(long i, long j)
         {
             // C-style indexing
             return (j * _nx + i) * ElementSize;
         }
 
 
-        private int CalculateShift(int i, int j, int k)
+        private long CalculateShift(long i, long j, long k)
         {
             // C-style indexing
             return ((j * _nx + i) * _interleaved + k) * ElementSize;
