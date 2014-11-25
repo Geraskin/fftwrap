@@ -7,7 +7,7 @@ namespace FftWrap
     [SuppressUnmanagedCodeSecurity]
     public static partial class FftwfMpi
     {
-        private const string NativeDllName = "libfftw3f-3.dll";
+        private const string NativeDllName = "libfftw3f-3";
         [DllImport(NativeDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "fftwf_mpi_init")]
         public static extern void Init();
         [DllImport(NativeDllName, CallingConvention = CallingConvention.Cdecl, EntryPoint = "fftwf_mpi_cleanup")]

@@ -22,7 +22,7 @@ namespace FftWrap.Examples
             CodeGenerator.GenerateCSharpCodeWithRoslyn(
                 path: @"..\..\..\FftWrap\Fftw.cs", 
                 className:@"Fftwf", 
-                dllName: @"""libfftw3f-3.dll""", 
+                dllName: @"""libfftw3f-3""", 
                 methods: methods);
         }
 
@@ -35,7 +35,7 @@ namespace FftWrap.Examples
             CodeGenerator.GenerateMpiCSharpCodeWithRoslyn(
                 path: @"..\..\..\FftWrap\FftwMpi.cs", 
                 className:@"FftwfMpi", 
-                dllName: @"""libfftw3f-3.dll""", 
+                dllName: @"""libfftw3f-3""", 
                 methods: methods);
         }
 
