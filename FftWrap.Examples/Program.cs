@@ -16,10 +16,10 @@ namespace FftWrap.Examples
             //Perform2DMpiInterleaved();
             //Perform2DMpi();
 
-            //Perform2DMpiComparison();
+            Perform2DMpiComparison();
 
 
-            Perform1DTransformDirect();
+            //Perform1DTransformDirect();
             //Perform1DTransform();
         }
 
