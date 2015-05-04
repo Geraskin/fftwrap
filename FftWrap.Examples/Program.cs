@@ -16,10 +16,10 @@ namespace FftWrap.Examples
             //Perform2DMpiInterleaved();
             //Perform2DMpi();
 
-            Perform2DMpiComparison();
+            //Perform2DMpiComparison();
 
 
-            //Perform1DTransformDirect();
+            Perform1DTransformDirect();
             //Perform1DTransform();
         }
 
@@ -27,7 +27,7 @@ namespace FftWrap.Examples
         {
             using (var mpi = new Mpi())
             {
-                FftwfMpi.Init();
+                FftwMpi.Init();
 
                 try
                 {
@@ -46,7 +46,7 @@ namespace FftWrap.Examples
 
                 finally
                 {
-                    FftwfMpi.Cleanup();
+                    FftwMpi.Cleanup();
                 }
             }
         }
@@ -139,7 +139,7 @@ namespace FftWrap.Examples
                 int size1 = 4;
                 int size2 = 3;
 
-                FftwfMpi.Init();
+                FftwMpi.Init();
 
                 try
                 {
@@ -164,7 +164,7 @@ namespace FftWrap.Examples
 
                 finally
                 {
-                    FftwfMpi.Cleanup();
+                    FftwMpi.Cleanup();
                 }
             }
         }
@@ -180,7 +180,7 @@ namespace FftWrap.Examples
                 const int size1 = 4;
                 const int size2 = 3;
 
-                FftwfMpi.Init();
+                FftwMpi.Init();
 
                 try
                 {
@@ -207,7 +207,7 @@ namespace FftWrap.Examples
 
                 finally
                 {
-                    FftwfMpi.Cleanup();
+                    FftwMpi.Cleanup();
                 }
             }
         }
@@ -269,15 +269,15 @@ namespace FftWrap.Examples
                 IntPtr ptrLocalN0;
                 IntPtr ptrLocalN0Start;
 
-                FftwfMpi.Init();
+                FftwMpi.Init();
 
 
 
-                IntPtr localSize = FftwfMpi.LocalSizeMany(2, new IntPtr[] { size1, size2 }, new IntPtr(1), new IntPtr(0), Mpi.CommWorld, out ptrLocalN0, out ptrLocalN0Start);
-                //IntPtr localSize = FftwfMpi.LocalSize2D(size1, size2, Mpi.CommWorld, out ptrLocalN0, out ptrLocalN0Start);
+                IntPtr localSize = FftwMpi.LocalSizeMany(2, new IntPtr[] { size1, size2 }, new IntPtr(1), new IntPtr(0), Mpi.CommWorld, out ptrLocalN0, out ptrLocalN0Start);
+                //IntPtr localSize = FftwMpi.LocalSize2D(size1, size2, Mpi.CommWorld, out ptrLocalN0, out ptrLocalN0Start);
 
 
-                IntPtr srcPtr = Fftwf.AllocComplex(localSize);
+                IntPtr srcPtr = Fftw.AllocComplex(localSize);
 
                 var matrix = new NativeMatrix<SingleComplex>(srcPtr, (int)ptrLocalN0, (int)size2);
 
@@ -289,26 +289,26 @@ namespace FftWrap.Examples
                 PrintArray(mpi, (int)ptrLocalN0Start, (int)ptrLocalN0, (int)size2, matrix);
 
 
-                var plan1 = FftwfMpi.PlanDft2D(size1, size2, srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Forward, (uint)Flags.Estimate);
-                var plan2 = FftwfMpi.PlanDft2D(size1, size2, srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Backward, (uint)Flags.Estimate);
+                var plan1 = FftwMpi.PlanDft2D(size1, size2, srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Forward, (uint)Flags.Estimate);
+                var plan2 = FftwMpi.PlanDft2D(size1, size2, srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Backward, (uint)Flags.Estimate);
 
 
 
-                Fftwf.Execute(plan1);
-                Fftwf.Execute(plan2);
+                Fftw.Execute(plan1);
+                Fftw.Execute(plan2);
 
 
                 Console.WriteLine();
 
                 PrintArray(mpi, (int)ptrLocalN0Start, (int)ptrLocalN0, (int)size2, matrix);
 
-                Fftwf.DestroyPlan(plan1);
-                Fftwf.DestroyPlan(plan2);
+                Fftw.DestroyPlan(plan1);
+                Fftw.DestroyPlan(plan2);
 
-                Fftwf.Free(srcPtr);
+                Fftw.Free(srcPtr);
 
 
-                FftwfMpi.Cleanup();
+                FftwMpi.Cleanup();
             }
         }
 
@@ -373,34 +373,34 @@ namespace FftWrap.Examples
         {
             int length = 100;
 
-
-            IntPtr srcPtr = Fftwf.AllocComplex((IntPtr)length);
-            IntPtr dstPtr = Fftwf.AllocComplex((IntPtr)length);
+            
+            IntPtr srcPtr = Fftw.AllocComplex((IntPtr)length);
+            IntPtr dstPtr = Fftw.AllocComplex((IntPtr)length);
 
             try
             {
-                var src = new NativeArray<SingleComplex>(srcPtr, length);
-                var dst = new NativeArray<SingleComplex>(dstPtr, length);
+                var src = new NativeArray<Complex>(srcPtr, length);
+                var dst = new NativeArray<Complex>(dstPtr, length);
 
-                src.SetEach(SingleComplex.Zero);
-                src[0] = SingleComplex.One;
+                src.SetEach(Complex.Zero);
+                src[0] = Complex.One;
 
-                IntPtr plan1 = Fftwf.PlanDft1D(length, srcPtr, dstPtr, (int)Direction.Forward, (uint)Flags.Estimate);
-                IntPtr plan2 = Fftwf.PlanDft1D(length, dstPtr, srcPtr, (int)Direction.Backward, (uint)Flags.Estimate);
+                IntPtr plan1 = Fftw.PlanDft1D(length, srcPtr, dstPtr, (int)Direction.Forward, (uint)Flags.Estimate);
+                IntPtr plan2 = Fftw.PlanDft1D(length, dstPtr, srcPtr, (int)Direction.Backward, (uint)Flags.Estimate);
 
-                Fftwf.Execute(plan1);
-                Fftwf.Execute(plan2);
+                Fftw.Execute(plan1);
+                Fftw.Execute(plan2);
 
-                Fftwf.DestroyPlan(plan1);
-                Fftwf.DestroyPlan(plan2);
+                Fftw.DestroyPlan(plan1);
+                Fftw.DestroyPlan(plan2);
 
                 Console.WriteLine(src[0]);
             }
 
             finally
             {
-                Fftwf.Free(srcPtr);
-                Fftwf.Free(dstPtr);
+                Fftw.Free(srcPtr);
+                Fftw.Free(dstPtr);
             }
         }
 

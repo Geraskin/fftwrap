@@ -8,36 +8,75 @@ namespace FftWrap.Examples
     {
         private static void Main(string[] args)
         {
-            GenerateMpiHeaderWraper();
-            GenerateHeaderWraper();
+            GenerateMpiHeaderWraperFloat();
+            GenerateHeaderWraperFloat();
+            
+            GenerateMpiHeaderWraperDouble();
+            GenerateHeaderWraperDouble();
         }
 
 
-        private static void GenerateHeaderWraper()
+        private static void GenerateHeaderWraperFloat()
         {
-            var methods = FftwHeaderParser.ParseMethods(@"..\..\Headers\fftw3.h");
+            var methods = FftwHeaderParser.ParseMethods(@"..\..\..\Headers\fftw3.h");
 
             //PrintMethods(methods);
 
+            CodeGenerator.DoublePrecision = false;
+
             CodeGenerator.GenerateCSharpCodeWithRoslyn(
-                path: @"..\..\..\FftWrap\Fftw.cs", 
+                path: @"..\..\..\..\FftWrap\Fftwf.cs", 
                 className:@"Fftwf", 
                 dllName: @"""libfftw3f-3""", 
                 methods: methods);
         }
 
-        private static void GenerateMpiHeaderWraper()
+        private static void GenerateMpiHeaderWraperFloat()
         {
-            var methods = FftwHeaderParser.ParseMethodsMpi(@"..\..\Headers\fftw3-mpi.h");
+            var methods = FftwHeaderParser.ParseMethodsMpi(@"..\..\..\Headers\fftw3-mpi.h");
 
             //PrintMethods(methods);
 
+            CodeGenerator.DoublePrecision = false;
+
             CodeGenerator.GenerateMpiCSharpCodeWithRoslyn(
-                path: @"..\..\..\FftWrap\FftwMpi.cs", 
+                path: @"..\..\..\..\FftWrap\FftwfMpi.cs", 
                 className:@"FftwfMpi", 
                 dllName: @"""libfftw3f-3""", 
                 methods: methods);
         }
+
+        private static void GenerateHeaderWraperDouble()
+        {
+            var methods = FftwHeaderParser.ParseMethods(@"..\..\..\Headers\fftw3.h");
+
+            //PrintMethods(methods);
+
+            CodeGenerator.DoublePrecision = true;
+
+            CodeGenerator.GenerateCSharpCodeWithRoslyn(
+                path: @"..\..\..\..\FftWrap\Fftw.cs",
+                className: @"Fftw",
+                dllName: @"""libfftw3-3""",
+                methods: methods);
+        }
+
+        private static void GenerateMpiHeaderWraperDouble()
+        {
+            var methods = FftwHeaderParser.ParseMethodsMpi(@"..\..\..\Headers\fftw3-mpi.h");
+
+            //PrintMethods(methods);
+
+            CodeGenerator.DoublePrecision = true;
+
+            CodeGenerator.GenerateMpiCSharpCodeWithRoslyn(
+                path: @"..\..\..\..\FftWrap\FftwMpi.cs",
+                className: @"FftwMpi",
+                dllName: @"""libfftw3-3""",
+                methods: methods);
+        }
+
+
 
 
         private static void PrintMethods(IReadOnlyCollection<Method> methods)

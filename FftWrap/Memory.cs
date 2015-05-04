@@ -12,7 +12,7 @@ namespace FftWrap
         {
             var size = NativeArray<T>.ElementSize;
 
-            IntPtr ptr = Fftwf.Malloc((IntPtr)(length * size));
+            IntPtr ptr = Fftw.Malloc((IntPtr)(length * size));
 
             _allPointers.Add(ptr);
 
@@ -23,7 +23,7 @@ namespace FftWrap
         {
             var size = NativeMatrix<T>.ElementSize;
 
-            IntPtr ptr = Fftwf.Malloc((IntPtr)(nx * ny * size));
+            IntPtr ptr = Fftw.Malloc((IntPtr)(nx * ny * size));
 
             _allPointers.Add(ptr);
 
@@ -32,7 +32,7 @@ namespace FftWrap
 
         public static void FreeAllPointers()
         {
-            _allPointers.ForEach(Fftwf.Free);
+            _allPointers.ForEach(Fftw.Free);
         }
     }
 }

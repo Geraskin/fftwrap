@@ -61,6 +61,14 @@ namespace FftWrap.Codegen
             return SinglePecisionPrefix + "_" + MpiPrefix + "_" + coreName;
         }
 
+
+        public static string NameToNativeDoublePrecisionWithMpi(this Method origin)
+        {
+            string coreName = ExtractCoreName(origin.Name);
+
+            return DoublePecisionPrefix + "_" + MpiPrefix + "_" + coreName;
+        }
+
         public static string NameToNativeDoublePrecision(this Method origin)
         {
             string coreName = ExtractCoreName(origin.Name);

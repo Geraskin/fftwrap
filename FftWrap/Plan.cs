@@ -17,7 +17,7 @@ namespace FftWrap
 
         public static Plan Create(NativeArray<SingleComplex> array, Direction direction)
         {
-            IntPtr ptr = Fftwf.PlanDft1D(array.Length, array.Ptr, array.Ptr, (int)direction, (uint)Flags.Estimate);
+            IntPtr ptr = Fftw.PlanDft1D(array.Length, array.Ptr, array.Ptr, (int)direction, (uint)Flags.Estimate);
 
             return new ArrayPlan<SingleComplex>(ptr, array);
         }
@@ -37,12 +37,12 @@ namespace FftWrap
 
             public override void Execute()
             {
-                Fftwf.Execute(PlanPtr);
+                Fftw.Execute(PlanPtr);
             }
 
             public override void Execute<T>(NativeArray<T> array)
             {
-                Fftwf.ExecuteDft(PlanPtr, array.Ptr, array.Ptr);
+                Fftw.ExecuteDft(PlanPtr, array.Ptr, array.Ptr);
             }
         }
 
@@ -72,7 +72,7 @@ namespace FftWrap
 
         private void ReleaseUnmanagedResources()
         {
-            Fftwf.DestroyPlan(_planPtr);
+            Fftw.DestroyPlan(_planPtr);
         }
 
         #endregion

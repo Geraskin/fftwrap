@@ -60,6 +60,8 @@
   <ItemGroup>
     <Compile Include="Direction.cs" />
     <Compile Include="Fftw.cs" />
+    <Compile Include="Fftwf.cs" />
+    <Compile Include="FftwfMpi.cs" />
     <Compile Include="FftwMpi.cs" />
     <Compile Include="Flags.cs" />
     <Compile Include="GuruFlags.cs" />

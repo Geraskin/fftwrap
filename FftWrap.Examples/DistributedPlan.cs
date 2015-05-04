@@ -73,16 +73,16 @@ namespace FftWrap
             var n = new[] { new IntPtr(size1), new IntPtr(size2), };
 
 
-            IntPtr localSize = FftwfMpi.LocalSizeMany(2, n, new IntPtr(numberOfInterleaved), DefaultBlock, mpiCommunicator, out localN0, out localN0Start);
+            IntPtr localSize = FftwMpi.LocalSizeMany(2, n, new IntPtr(numberOfInterleaved), DefaultBlock, mpiCommunicator, out localN0, out localN0Start);
 
-            IntPtr srcPtr = Fftwf.AllocComplex(localSize);
+            IntPtr srcPtr = Fftw.AllocComplex(localSize);
 
             var matrix = new NativeMatrix<SingleComplex>(srcPtr, (int)localN0, size2, numberOfInterleaved);
 
             //IntPtr tblock = new IntPtr(localN0.ToInt32() * size2);
 
-            var planF = FftwfMpi.PlanManyDft(2, n, new IntPtr(numberOfInterleaved), DefaultBlock, DefaultBlock, srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Forward, (uint)Flags.Estimate);
-            var planB = FftwfMpi.PlanManyDft(2, n, new IntPtr(numberOfInterleaved), DefaultBlock, DefaultBlock, srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Backward, (uint)Flags.Estimate);
+            var planF = FftwMpi.PlanManyDft(2, n, new IntPtr(numberOfInterleaved), DefaultBlock, DefaultBlock, srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Forward, (uint)Flags.Estimate);
+            var planB = FftwMpi.PlanManyDft(2, n, new IntPtr(numberOfInterleaved), DefaultBlock, DefaultBlock, srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Backward, (uint)Flags.Estimate);
 
 
             return new DistributedPlan(planF, planB, (int)localN0, (int)localN0Start, size1, size2, numberOfInterleaved, matrix);
@@ -95,14 +95,14 @@ namespace FftWrap
 
             var n = new[] { new IntPtr(size1), new IntPtr(size2), };
 
-            IntPtr localSize = FftwfMpi.LocalSize2D(n[0], n[1], mpiCommunicator, out localN0, out localN0Start);
+            IntPtr localSize = FftwMpi.LocalSize2D(n[0], n[1], mpiCommunicator, out localN0, out localN0Start);
 
-            IntPtr srcPtr = Fftwf.AllocComplex(localSize);
+            IntPtr srcPtr = Fftw.AllocComplex(localSize);
 
             var matrix = new NativeMatrix<SingleComplex>(srcPtr, (int)localN0, size2);
 
-            var planF = FftwfMpi.PlanDft2D(n[0], n[1], srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Forward, (uint)Flags.Estimate);
-            var planB = FftwfMpi.PlanDft2D(n[0], n[1], srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Backward, (uint)Flags.Estimate);
+            var planF = FftwMpi.PlanDft2D(n[0], n[1], srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Forward, (uint)Flags.Estimate);
+            var planB = FftwMpi.PlanDft2D(n[0], n[1], srcPtr, srcPtr, Mpi.CommWorld, (int)Direction.Backward, (uint)Flags.Estimate);
 
 
             return new DistributedPlan(planF, planB, (int)localN0, (int)localN0Start, size1, size2, 1, matrix);
@@ -166,7 +166,7 @@ namespace FftWrap
             if (_isDisposed)
                 throw new ObjectDisposedException(this.GetType().ToString());
 
-            Fftwf.Execute(_forwardPlan);
+            Fftw.Execute(_forwardPlan);
         }
 
         public void RunBackward()
@@ -174,7 +174,7 @@ namespace FftWrap
             if (_isDisposed)
                 throw new ObjectDisposedException(this.GetType().ToString());
 
-            Fftwf.Execute(_backwardPlan);
+            Fftw.Execute(_backwardPlan);
         }
 
         ~DistributedPlan()
@@ -186,9 +186,9 @@ namespace FftWrap
         {
             _isDisposed = true;
 
-            Fftwf.Free(_data.Ptr);
-            Fftwf.DestroyPlan(_forwardPlan);
-            Fftwf.DestroyPlan(_backwardPlan);
+            Fftw.Free(_data.Ptr);
+            Fftw.DestroyPlan(_forwardPlan);
+            Fftw.DestroyPlan(_backwardPlan);
 
             GC.SuppressFinalize(this);
         }
